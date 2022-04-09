@@ -18,6 +18,11 @@ class Bot(commands.Bot):
     async def on_ready(self):
         print(f'Logged on as {self.user} (ID: {self.user.id})')
 
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+        await self.process_commands(message)
+
 # write general commands here
 
 async def main():
