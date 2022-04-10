@@ -1,23 +1,29 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
+from numpy import random
 import discord
 import json
 import asyncio
 import csv
 import os
 import requests
+import sys
 
 
 class Anime(commands.Cog):
     """The description for Anime goes here."""
 
     working_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(f'{working_dir}..')
     themes_data = json.load(open(f'{working_dir}/../db/themes1.json', encoding='utf8'))
+    pic_url = 'https://api.waifu.pics/sfw/'
 
     with open(f'{working_dir}/../db/registered_ids.csv', 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         registered_ids = [int(row[0]) for row in list(reader)[1:]]
+
+    from config import categories
 
     def __init__(self, bot):
         self.bot = bot
@@ -108,7 +114,7 @@ class Anime(commands.Cog):
         response = []
         try:
             response.append(f'**{data["data"][choice]["title"]}**')
-            response.append(f'**Type:** {data["data"][choice]["score"]}')
+            response.append(f'**Score:** {data["data"][choice]["score"]}')
             response.append(f'**Rating:** {data["data"][choice]["rating"]}')
             response.append(f'**Episodes:** {data["data"][choice]["episodes"]}')
             response.append(f'**Popularity:** {data["data"][choice]["popularity"]}')
@@ -119,7 +125,7 @@ class Anime(commands.Cog):
             print(e)
             response = []
             response.append(f'**{data["data"][choice]["title"]}**')
-            response.append(f'**Type:** {data["data"][choice]["score"]}')
+            response.append(f'**Score:** {data["data"][choice]["score"]}')
             response.append(f'**Rating:** {data["data"][choice]["rating"]}')
             response.append(f'**Popularity:** {data["data"][choice]["popularity"]}')
             response.append(
@@ -230,6 +236,33 @@ class Anime(commands.Cog):
                     return await ctx.send('Invalid choice.')
                 
                 return await ctx.send(f'Ending #{choice+1}:\n{eds[choice]}')
+
+    
+    # anime pictures, make category an optional parameter
+    @commands.command(name='anime-pic', aliases=['anime-pics', 'anime-pictures'])
+    async def anime_pic(self, ctx, category: str = None):
+        """
+        Get a random anime picture from the specified category.
+        """
+        if not category:
+            # Return a random picture
+            category = random.choice(self.categories)
+            await ctx.send(f"You didn't specify a category, so I'll pick one for you: {category}")
+
+            # Api call
+            response = requests.get(f'{self.pic_url}{category}').text
+            picture = json.loads(response)['url']
+            return await ctx.send(picture)
+
+
+        if category.lower() not in self.categories:
+            return await ctx.send('Invalid category.')
+
+        response = requests.get(f'{self.pic_url}{category}').text
+        picture = json.loads(response)['url']
+        return await ctx.send(picture)
+
+        
 
     # define a listener function
     @commands.Cog.listener()
