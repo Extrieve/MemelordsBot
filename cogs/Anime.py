@@ -60,12 +60,79 @@ class Anime(commands.Cog):
         return openings, endings
 
 
-    @commands.command(name='anime', aliases=['anime-info'])
-    async def anime(self, ctx, *, anime_name):
+    @commands.command(name='ani-search', aliases=['anime-info', 'anime-search'])
+    async def ani_search(self, ctx, *, anime_name):
         """
         Get information about an anime.
         """
-        await ctx.send(f'{anime_name}')
+        if not anime_name:
+            return await ctx.send('Please enter an anime name.')
+        
+        if len(anime_name) < 4:
+            return await ctx.send('The anime name must be at least 4 characters long.')
+
+        url = 'https://api.jikan.moe/v4/anime'
+        params = {'q' : anime_name}
+
+        request = requests.get(url, params=params, verify=False)
+
+        if request.status_code != 200:
+            return await ctx.send('Anime not found.')
+        
+        data = request.json()
+        results = []
+        for i, entry in enumerate(data['data']):
+            results.append(f'{i+1}. {entry["title"]}')
+
+        embed = discord.Embed(title='Anime Search', description='\n'.join(results), color=0x00ff00)
+        embed.set_footer(text='Type the number of the anime you want to get info on.')
+        await ctx.send(embed=embed)
+
+        # Get user selection
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+        
+        try:
+            choice = await self.bot.wait_for('message', check=check, timeout=20.0)
+        except asyncio.TimeoutError:
+            return await ctx.send('You took too long to respond.')
+            
+        try:
+            choice = int(choice.content) - 1
+        except ValueError:
+            return await ctx.send('Please enter a valid number.')
+        
+        if choice < 0 or choice >= len(data['data']):
+            return await ctx.send('Please enter a valid number.')
+        
+        response = []
+        try:
+            response.append(f'**{data["data"][choice]["title"]}**')
+            response.append(f'**Type:** {data["data"][choice]["score"]}')
+            response.append(f'**Rating:** {data["data"][choice]["rating"]}')
+            response.append(f'**Episodes:** {data["data"][choice]["episodes"]}')
+            response.append(f'**Popularity:** {data["data"][choice]["popularity"]}')
+            response.append(f'**Studios:** {data["data"][choice]["studios"][0]["name"]}')
+            response.append(f'**Synopsis:** {data["data"][choice]["synopsis"]}')
+            response.append(f'**Posters:** {data["data"][choice]["images"]["jpg"]["large_image_url"]}')
+        except (KeyError, IndexError, ValueError) as e:
+            print(e)
+            response = []
+            response.append(f'**{data["data"][choice]["title"]}**')
+            response.append(f'**Type:** {data["data"][choice]["score"]}')
+            response.append(f'**Rating:** {data["data"][choice]["rating"]}')
+            response.append(f'**Popularity:** {data["data"][choice]["popularity"]}')
+            response.append(
+                f'**Synopsis:** {data["data"][choice]["synopsis"]}')
+            response.append(
+                f'**Posters:** {data["data"][choice]["images"]["jpg"]["large_image_url"]}')
+
+        
+        embed = discord.Embed(title='Anime Info', description='\n'.join(response), color=0x00ff00)
+        embed.set_thumbnail(url=data["data"][choice]["images"]["jpg"]["large_image_url"])
+        # embed.set_footer(text='Type the number of the anime you want to get info on.')
+        return await ctx.send(embed=embed)
+
 
     @commands.command(name='ani-vid', aliases=['anime-video', 'anime-vid'])
     async def ani_vid(self, ctx, *, anime_name):

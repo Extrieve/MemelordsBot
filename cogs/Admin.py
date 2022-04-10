@@ -62,6 +62,22 @@ class Admin(commands.Cog):
         role = discord.utils.get(ctx.guild.roles, name='Muted')
         await member.remove_roles(role, reason=reason)
         await ctx.send(f'Unmuted {member.mention}')
+
+    # Reaction roles
+    @commands.command(name='addrole', aliases=['ar'], pass_context=True)
+    @commands.has_permissions(manage_roles=True)
+    async def addrole(self, ctx, member: discord.Member, *, role: discord.Role):
+        """Add a role to a member."""
+        await member.add_roles(role)
+        await ctx.send(f'Added {role.name} to {member.mention}')
+
+    # on member join
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        """On member join, assign the member the default role."""
+        # Assign the member the role 'Normies'
+        role = discord.utils.get(member.guild.roles, name='Normies')
+        await member.add_roles(role)
     
 
 def setup(bot):
