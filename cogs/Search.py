@@ -44,6 +44,7 @@ class Search(commands.Cog):
         }
         search = GoogleSearch(params)
         results = search.get_dict()
+        length = len(results['images_results'])
         
         # Tell user we're loading the request
         await ctx.send(f'Loading...')
@@ -56,7 +57,34 @@ class Search(commands.Cog):
         # Display the first image but allow the user to traverse the rest
         embed = discord.Embed(title=f'{results["images_results"][0]["title"]}', url=results['images_results'][0]['original'], color=0x00ff00)
         embed.set_image(url=results['images_results'][0]['original'])
-        return await ctx.send(embed=embed)
+        msg = await ctx.send(embed=embed)
+
+        # Allow the user to traverse the rest of the images
+        await msg.add_reaction('◀️')
+        await msg.add_reaction('▶️')
+
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) in ['◀️', '▶️']
+        
+        index = 0
+        while True:
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                return await ctx.send('Request timed out.')
+            else:
+                if str(reaction.emoji) == '◀️':
+                    index -= 1
+                    if index < 0:
+                        index = length - 1
+                elif str(reaction.emoji) == '▶️':
+                    index += 1
+                    if index >= length:
+                        index = 0
+                embed = discord.Embed(title=f'{results["images_results"][index]["title"]}', url=results['images_results'][index]['original'], color=0x00ff00)
+                embed.set_image(url=results['images_results'][index]['original'])
+                await msg.edit(embed=embed)
+                await msg.remove_reaction(reaction.emoji, user)
 
     # Dictionary definitions
     @commands.command(name='define', aliases=['d'])

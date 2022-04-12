@@ -174,7 +174,7 @@ class Anime(commands.Cog):
         ops, eds = self.get_anime_vid(available[choice][0])
 
         if ops and not eds:
-            await ctx.send(f'This title contains {len(ops)} opening(s).\nSelect one of them')
+            await ctx.send(f'This title contains {len(ops)} opening(s). Enter the number of the video you want to watch.')
 
             try:
                 choice = await self.bot.wait_for('message', timeout=60, check=lambda m: m.author == ctx.author and m.channel == ctx.channel and m.content.isdigit())
@@ -188,7 +188,7 @@ class Anime(commands.Cog):
             return await ctx.send(f'Opening #{choice + 1}):\n{ops[choice]}')
 
         elif eds and not ops:
-            await ctx.send(f'This title contains {len(eds)} ending(s).\nSelect one of them')
+            await ctx.send(f'This title contains {len(eds)} ending(s). Enter the number of the video you want to watch.')
 
             try:
                 choice = await self.bot.wait_for('message', timeout=60, check=lambda m: m.author == ctx.author and m.channel == ctx.channel and m.content.isdigit())
@@ -202,16 +202,22 @@ class Anime(commands.Cog):
             return await ctx.send(f'Ending #{choice + 1}:\n{eds[choice]}')
 
         else:
-            await ctx.send(f'This title contains {len(ops)} opening(s) and {len(eds)} ending(s).\nDo you want to select an opening or an ending?')
+            msg = await ctx.send(f'This title contains {len(ops)} opening(s) and {len(eds)} ending(s).\nDo you want to select an opening 😎 or an ending 🥰?')
 
+            # add reactions to message
+            await msg.add_reaction('😎')
+            await msg.add_reaction('🥰')
+
+            def check(reaction, user):
+                return user == ctx.author and str(reaction.emoji) in ['🥰', '😎']
             try:
-                choice = await self.bot.wait_for('message', timeout=60, check=lambda m: m.author == ctx.author and m.channel == ctx.channel and m.content.lower() in ['opening', 'ending'])
+            
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=60, check=check)
             except asyncio.TimeoutError:
                 return await ctx.send('You took too long to respond.')
             
-            choice = choice.content.lower()
-            if choice == 'opening':
-                await ctx.send(f'This title has {len(ops)} opening(s).\nSelect one of them')
+            if str(reaction.emoji) == '😎':
+                await ctx.send(f'This title has {len(ops)} opening(s). Enter the number of the video you want to watch.')
                 try:
                     choice = await self.bot.wait_for('message', timeout=60, check=lambda m: m.author == ctx.author and m.channel == ctx.channel and m.content.isdigit())
                 except asyncio.TimeoutError:
@@ -224,7 +230,7 @@ class Anime(commands.Cog):
                 return await ctx.send(f'Opening #{choice + 1}):\n{ops[choice]}')
             
             else:
-                await ctx.send(f'This title has {len(eds)} ending(s).\nSelect one of them')
+                await ctx.send(f'This title has {len(eds)} ending(s). Enter the number of the video you want to watch.')
 
                 try:
                     choice = await self.bot.wait_for('message', timeout=60, check=lambda m: m.author == ctx.author and m.channel == ctx.channel and m.content.isdigit())
