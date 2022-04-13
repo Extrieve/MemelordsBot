@@ -26,3 +26,4 @@ var/
 
 # Our configuration files
 config.py
+google_vision.json

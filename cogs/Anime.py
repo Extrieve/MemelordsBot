@@ -9,6 +9,7 @@ import csv
 import os
 import requests
 import sys
+import urllib.parse
 
 
 class Anime(commands.Cog):
@@ -267,6 +268,34 @@ class Anime(commands.Cog):
         response = requests.get(f'{self.pic_url}{category}').text
         picture = json.loads(response)['url']
         return await ctx.send(picture)
+
+    
+    # Recognize anime by scene
+    @commands.command(name='ani-scene', aliases=['ani-scenes, anime-scene'])
+    async def ani_scene(self, ctx, scene_url: str):
+        """
+        Recognize anime by scene.
+        """
+        
+        # verify that the url contains an image
+        if not scene_url.endswith('.jpg') and not scene_url.endswith('.png') and not scene_url.endswith('.jpeg'):
+            return await ctx.send('Invalid url.')
+
+        parse_url = urllib.parse.quote_plus(scene_url)
+        response = requests.get(f"https://api.trace.moe/search?url={parse_url}").json()
+        
+        if response['error']:
+            return await ctx.send('Could not find anime.')
+        
+        results = response['result']
+
+        title = results[0]['filename']
+        episode = f"Episode: {results[0]['episode']}"
+        similarity = f"Similarity: {results[0]['similarity']}"
+
+        embed = discord.Embed(title=title, description=f'{episode}\n{similarity}')
+        embed.set_image(url=scene_url)
+        return await ctx.send(embed=embed)
 
         
 
