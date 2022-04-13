@@ -140,6 +140,69 @@ class Anime(commands.Cog):
         # embed.set_footer(text='Type the number of the anime you want to get info on.')
         return await ctx.send(embed=embed)
 
+    # manga search
+    @commands.command(name='manga-search', aliases=['manga-info', 'man-search'])
+    async def manga_search(self, ctx, *, manga_name):
+        """
+        Get information about a manga.
+        """
+        
+        if not manga_name:
+            return await ctx.send('Please enter a manga name.')
+        
+        if len(manga_name) < 4:
+            return await ctx.send('The manga name must be at least 4 characters long.')
+
+        url = 'https://api.jikan.moe/v4/manga/'
+        params = {'q' : manga_name, 'page' : 1}
+
+        request = requests.get(url, params=params, verify=False)
+
+        if request.status_code != (200 or 204):
+            return await ctx.send('Manga not found.')
+        
+        data = json.loads(request.text)
+        results = []
+        for i, entry in enumerate(data['data']):
+            results.append(f'{i+1}. {entry["title"]}')
+
+        embed = discord.Embed(title='Manga Search', description='\n'.join(results), color=0x00ff00)
+        embed.set_footer(text='Type the number of the manga you want to get info on.')
+        await ctx.send(embed=embed)
+
+        # Get user selection
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+        
+        try:
+            choice = await self.bot.wait_for('message', check=check, timeout=20.0)
+        except asyncio.TimeoutError:
+            return await ctx.send('You took too long to respond.')
+            
+        try:
+            choice = int(choice.content) - 1
+        except ValueError:
+            return await ctx.send('Please enter a valid number.')
+        
+        if choice < 0 or choice >= len(data['data']):
+            return await ctx.send('Please enter a valid number.')
+        
+        response = []
+        try:
+            title = data['data'][choice]['title']
+            image = data['data'][choice]['images']['jpg']['large_image_url']
+            response.append(f'**Chapters**: {data["data"][choice]["chapters"]}')
+            response.append(f'**Volumes**: {data["data"][choice]["volumes"]}')
+            response.append(f'**Score**: {data["data"][choice]["score"]}')
+            response.append(f'**Synopsis**: {data["data"][choice]["synopsis"]}')
+        except (KeyError, IndexError, ValueError) as e:
+            print(e)
+            return await ctx.send('Manga not found.')
+
+        embed = discord.Embed(title=title, description='\n'.join(response), color=0x00ff00)
+        embed.set_thumbnail(url=image)
+        return await ctx.send(embed=embed)
+
 
     @commands.command(name='ani-vid', aliases=['anime-video', 'anime-vid'])
     async def ani_vid(self, ctx, *, anime_name):

@@ -3,12 +3,15 @@
 from discord.ext import commands
 from google.cloud import vision
 import discord
-import os
+import os, sys
+import requests
 
 class Machinelearning(commands.Cog):
     """The description for Machinelearning goes here."""
 
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'db/google_vision.json'
+    cwd = os.getcwd()
+    sys.path.append(f'{cwd}..')
+    from config import google_key
 
     def __init__(self, bot):
         self.bot = bot
@@ -16,21 +19,31 @@ class Machinelearning(commands.Cog):
     def detect_labels_uri(self, uri):
         """Detects labels in the file located in Google Cloud Storage or on the
         Web."""
-        client = vision.ImageAnnotatorClient()
-        image = vision.Image()
-        image.source.image_uri = uri
+        api_root = 'https://vision.googleapis.com/v1/images:annotate?key='
 
-        response = client.label_detection(image=image)
-        labels = response.label_annotations
+        # Request parameters
+        params = {
+            'requests': [{
+                'image': {
+                    'source': {
+                        'imageUri': uri
+                    }
+                },
+                'features': [{
+                    'type': 'LABEL_DETECTION',
+                    'maxResults': 10
+                }]
+            }]
+        }
+
+        # make the request
+        r = requests.post(api_root + self.google_key, json=params)
+
+        # print the response
+        response = r.json()['responses'][0]['labelAnnotations']
         output = []
-        for label in labels:
-            output.append(f'{label.description} {label.score:.2f}')
-
-        if response.error.message:
-            raise Exception(
-                '{}\nFor more info on error messages, check: '
-                'https://cloud.google.com/apis/design/errors'.format(
-                    response.error.message))
+        for item in response:
+            output.append(f"{item['description']}: {round(item['score'], 2)}")
 
         return output
 
@@ -45,10 +58,7 @@ class Machinelearning(commands.Cog):
         embed = discord.Embed(title='Labels', description='\n'.join(labels))
         embed.set_image(url=image_url)
         await ctx.send(embed=embed)
-
     
-
     
-
 def setup(bot):
     bot.add_cog(Machinelearning(bot))
