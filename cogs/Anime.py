@@ -24,7 +24,7 @@ class Anime(commands.Cog):
         reader = csv.reader(f)
         registered_ids = [int(row[0]) for row in list(reader)[1:]]
 
-    from config import categories
+    from setup import categories
 
     def __init__(self, bot):
         self.bot = bot
