@@ -15,7 +15,7 @@ class Search(commands.Cog):
     # Get current working directory and add it to the path
     cwd = os.getcwd()
     sys.path.append(f'{cwd}..')
-    from config import serp_key
+    serp_key = os.environ['serp_key']
 
     def __init__(self, bot):
         self.bot = bot

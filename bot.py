@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
-import discord
-import config
+import os
 import asyncio
 import setup
 
@@ -23,7 +22,7 @@ class Bot(commands.Bot):
 
 async def main():
     bot = Bot()
-    await bot.start(config.token)
+    await bot.start(os.environ['token'])
 
 if __name__ == '__main__':
     asyncio.run(main())

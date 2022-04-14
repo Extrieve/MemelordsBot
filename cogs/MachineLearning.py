@@ -10,7 +10,7 @@ class Machinelearning(commands.Cog):
 
     cwd = os.getcwd()
     sys.path.append(f'{cwd}..')
-    from config import google_key
+    google_key = os.environ['google_key']
 
     def __init__(self, bot):
         self.bot = bot
