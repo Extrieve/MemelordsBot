@@ -51,6 +51,11 @@ class Generalpurpose(commands.Cog):
             await message.add_reaction('🔥')
             # red pepper emoji
             await message.add_reaction('🌶')
+
+        if message.author.name == 'Buddha':
+            if 'png' or 'jpg' in message.content:
+                # add wolf emoji reaction
+                await message.add_reaction('🐺')
             
         
 

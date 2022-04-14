@@ -66,6 +66,41 @@ class Anime(commands.Cog):
         
         return openings, endings
 
+    def anilist_query(self, anime_id):
+        
+        query = '''
+        query ($id: Int) { # Define which variables will be used in the query (id)
+        Media (id: $id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
+            id
+            title {
+            romaji
+            english
+            native
+            }
+        }
+        }
+        '''
+
+        # Define our query variables and values that will be used in the query request
+        variables = {
+            'id': int(anime_id)
+        }
+
+        url = 'https://graphql.anilist.co'
+
+        # Make the HTTP Api request
+        response = requests.post(url, json={'query': query, 'variables': variables})
+
+        if response.status_code != 200:
+            raise Exception('Query failed to run by returning code of {}. {}'.format(response.status_code, response.text))
+
+        data = response.json()
+        output = {}
+        output['title_rom'] = data['data']['Media']['title']['romaji']
+        output['title_eng'] = data['data']['Media']['title']['english']
+
+        return output
+
 
     @commands.command(name='ani-search', aliases=['anime-info', 'anime-search'])
     async def ani_search(self, ctx, *, anime_name):
@@ -352,11 +387,17 @@ class Anime(commands.Cog):
         
         results = response['result']
 
-        title = results[0]['filename']
-        episode = f"Episode: {results[0]['episode']}"
-        similarity = f"Similarity: {results[0]['similarity']}"
+        anime_id = results[0]['anilist']
+        titles = self.anilist_query(anime_id)
 
-        embed = discord.Embed(title=title, description=f'{episode}\n{similarity}')
+        output = []
+        title_rom = titles['title_rom']
+        output.append(f"**English Title**: {titles['title_eng']}")
+        output.append(f"**Filename**: {results[0]['filename']}")
+        output.append(f"**Episode**: {results[0]['episode']}")
+        output.append(f"Similarity: {round(results[0]['similarity'], 2)}")
+
+        embed = discord.Embed(title=title_rom, description='\n'.join(output), color=0x00ff00)
         embed.set_image(url=scene_url)
         return await ctx.send(embed=embed)
 
