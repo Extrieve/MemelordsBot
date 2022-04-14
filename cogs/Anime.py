@@ -402,11 +402,21 @@ class Anime(commands.Cog):
         return await ctx.send(embed=embed)
 
         
-
-    # define a listener function
     @commands.Cog.listener()
-    async def on_message(self, message):
-        pass
+    async def on_raw_reaction_add(self, payload):
+        message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+        if message.author.bot:
+            return
+        
+        reaction = discord.utils.get(message.reactions, emoji='🤓')
+
+        if not reaction:
+            return
+
+        user = payload.member
+
+        if ('jpg' or 'png' or 'jpeg') in message.content:
+            await self.ani_scene(message.channel, message.content)
 
 
 def setup(bot):
