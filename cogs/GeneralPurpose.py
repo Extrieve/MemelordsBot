@@ -41,6 +41,29 @@ class Generalpurpose(commands.Cog):
         else:
             return await ctx.send('Sorry, there was an error getting yo momma')
 
+    @commands.command(name='8ball', aliases=['8b'])
+    async def eightball(self, ctx, *, question):
+        """Ask the magic 8ball a question"""
+
+        # get answer
+        eightball = requests.get('https://8ball.delegator.com/magic/JSON/')
+        if eightball:
+            return await ctx.send(json.loads(eightball.text)['magic']['answer'])
+        else:
+            return await ctx.send('Sorry, there was an error getting the magic 8ball')
+    
+    # duck pic
+    @commands.command(name='duck', aliases=['duckpic'])
+    async def duck(self, ctx):
+        """Get a random duck pic"""
+
+        # get pic
+        duck = requests.get('https://random-d.uk/api/random')
+        if duck:
+            return await ctx.send(json.loads(duck.text)['url'])
+        else:
+            return await ctx.send('Sorry, there was an error getting the duck pic')
+
     
     # define a listener
     @commands.Cog.listener()
