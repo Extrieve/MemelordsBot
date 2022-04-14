@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
-from google.cloud import vision
 import discord
 import os, sys
 import requests
