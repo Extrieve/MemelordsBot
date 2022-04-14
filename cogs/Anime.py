@@ -418,11 +418,10 @@ class Anime(commands.Cog):
         user = payload.member
         # print(user)
 
-        if ('jpg' or 'png' or 'jpeg') in message.content:
-            # print('HERE')
-            # print(output)
-            # await self.bot.get_channel(payload.channel_id).send(output)
-            await self.ani_scene(message.channel, message.content)
+        print('HERE')
+        # print(output)
+        # await self.bot.get_channel(payload.channel_id).send(output)
+        return await self.ani_scene(message.channel, message.content)
         
 
 def setup(bot):
