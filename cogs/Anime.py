@@ -413,10 +413,11 @@ class Anime(commands.Cog):
         if not reaction:
             return
 
-        user = payload.member
+        # user = payload.member
 
-        if ('jpg' or 'png' or 'jpeg') in message.content:
-            await self.ani_scene(message.channel, message.content)
+        print('HERE')
+        # await self.bot.get_channel(payload.channel_id).send(output)
+        return await self.ani_scene(message.channel, message.content)
 
 
 def setup(bot):
