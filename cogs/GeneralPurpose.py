@@ -114,6 +114,22 @@ class Generalpurpose(commands.Cog):
             return await ctx.send('Sorry, there was an error getting the duck pic')
 
     
+    @commands.command(name='avatar', aliases=['av'])
+    async def avatar(self, ctx, *, user: discord.Member = None):
+        """Get a user's avatar"""
+
+        # get user
+        if not user:
+            user = ctx.author
+
+        # get avatar
+        avatar = user.avatar_url
+        if avatar:
+            return await ctx.send(avatar)
+        else:
+            return await ctx.send('Sorry, there was an error getting the avatar')
+
+    
     # define a listener
     @commands.Cog.listener()
     async def on_message(self, message):
