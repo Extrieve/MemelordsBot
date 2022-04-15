@@ -49,7 +49,7 @@ class Generalpurpose(commands.Cog):
 
 
     @commands.command(name='ame', aliases=['ame-api'])
-    async def ame_test(self, ctx, tag, image_url):
+    async def ame_test(self, ctx, tag, image_url=''):
         """
         Get an image embed from Ame, $ame <tag> <image_url>, 
         $ame tags for a list of tags
@@ -60,7 +60,7 @@ class Generalpurpose(commands.Cog):
             tag = self.random.choice(self.ame_endpoints)
             await ctx.send(f'No tag specified, using {tag}')
 
-        if tag == 'tags':
+        if tag == ('tag' or 'tags' or 'help'):
             # list tags
             return await ctx.send(f'Available tags: {", ".join(self.ame_endpoints)}')
 
