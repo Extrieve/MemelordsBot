@@ -177,7 +177,7 @@ class Anime(commands.Cog):
         return await ctx.send(embed=embed)
 
     # manga search
-    @commands.command(name='manga-search', aliases=['manga-info', 'man-search'])
+    @commands.command(name='manga-search', aliases=['manga', 'manga-info', 'man-search'])
     async def manga_search(self, ctx, *, manga_name):
         """
         Get information about a manga.
