@@ -24,6 +24,9 @@ var/
 .installed.cfg
 *.egg
 
+# Image files
+*.png
+
 # Our configuration files
 config.py
 google_vision.json
