@@ -49,7 +49,7 @@ class Generalpurpose(commands.Cog):
 
 
     @commands.command(name='ame', aliases=['ame-api'])
-    async def ame_test(self, ctx, tag, image_url=''):
+    async def ame_api(self, ctx, tag, image_url=''):
         """
         Get an image embed from Ame, $ame <tag> <image_url>, 
         $ame tags for a list of tags
