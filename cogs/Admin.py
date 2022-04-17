@@ -71,6 +71,13 @@ class Admin(commands.Cog):
         await member.add_roles(role)
         await ctx.send(f'Added {role.name} to {member.mention}')
 
+    @commands.command(name='removerole', aliases=['rr'], pass_context=True)
+    @commands.has_permissions(manage_roles=True)
+    async def removerole(self, ctx, member: discord.Member, *, role: discord.Role):
+        """Remove a role from a member."""
+        await member.remove_roles(role)
+        await ctx.send(f'Removed {role.name} from {member.mention}')
+
     # on member join
     @commands.Cog.listener()
     async def on_member_join(self, member):
