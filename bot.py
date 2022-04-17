@@ -20,7 +20,9 @@ class Bot(commands.Bot):
         
 
 async def main():
-    bot = Bot()
+    intents = discord.Intents.default()
+    intents.members = True
+    bot = Bot(intents=intents)
     await bot.start(config.token)
 
 if __name__ == '__main__':
