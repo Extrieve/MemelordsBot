@@ -22,9 +22,9 @@ class Bot(commands.Bot):
 # write general commands here
 
 async def main():
-    bot = Bot()
     intents = discord.Intents.default()
     intents.members = True
+    bot = Bot(intents=intents)
     await bot.start(os.environ['token'])
 
 if __name__ == '__main__':
