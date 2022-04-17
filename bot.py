@@ -5,6 +5,7 @@ from discord.ext import commands
 import os
 import asyncio
 import setup
+import discord
 
 class Bot(commands.Bot):
     def __init__(self, **kwargs):
@@ -22,6 +23,8 @@ class Bot(commands.Bot):
 
 async def main():
     bot = Bot()
+    intents = discord.Intents.default()
+    intents.members = True
     await bot.start(os.environ['token'])
 
 if __name__ == '__main__':
