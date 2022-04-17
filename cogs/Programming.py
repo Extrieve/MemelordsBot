@@ -31,7 +31,7 @@ class Programming(commands.Cog):
                 return await ctx.send(f'Error: {r.status_code}')
 
             data = r.json()
-            # TODO: Complete the for contests of all sites
+            # TODO: Complete the for contests of all sites and fix timezone
             pass
         
         site = site.replace(' ', '_')
