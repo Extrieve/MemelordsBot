@@ -19,25 +19,6 @@ class Programming(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # def ztoest(value):
-    #     d, t = value.split('T')
-    #     l = [int(x) for x in t.split(':')]
-    #     l2 = [int(x) for x in d.split('-')]
-    #     i2 = l2[2]
-    #     i = l[0]
-    #     i -= 4
-    #     if i < 0:
-    #         i += 24
-    #         i2 -= 1
-    #         l[0] = str(i)
-    #         l2[2] = str(i2)
-    #     else:
-    #         l[0] = str(i)
-
-    #     date = f'{l2[1]}-{l2[2]}-{l2[0]}'
-    #     time = f'{l[0]}:{l[1]} EST'
-    #     return date, time
-
     def time_convert(self, convert):
         est = pytz.timezone('US/Eastern')
         utc = pytz.utc
