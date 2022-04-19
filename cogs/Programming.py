@@ -25,7 +25,7 @@ class Programming(commands.Cog):
 
     def time_convert(self, convert, fmt):
         """Converts time to a different format."""
-        fmt = dateutil.parser.parse('2014-07-07T15:38:00.000Z')
+        fmt = dateutil.parser.parse(convert)
         # convert zulu time to local time
         fmt = fmt.astimezone()
         # convert format to d-m-Y H:M:S
