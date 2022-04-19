@@ -26,8 +26,8 @@ class Programming(commands.Cog):
     def time_convert(self, convert, fmt):
         """Converts time to a different format."""
         fmt = dateutil.parser.parse(convert)
-        # convert zulu time to local time
-        fmt = fmt.astimezone()
+        # convert zulu time to eastern standard time
+        fmt = fmt.astimezone(pytz.timezone('US/Eastern'))
         # convert format to d-m-Y H:M:S
         fmt = fmt.strftime('%d-%m-%Y %H:%M:%S')
 
