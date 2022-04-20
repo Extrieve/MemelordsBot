@@ -138,6 +138,75 @@ class Search(commands.Cog):
 
             await message.remove_reaction(reaction.emoji, user)
 
+    @commands.command(name='yugi', aliases=['yugioh'])
+    async def yugi(self, ctx, *, search):
+        """
+        Search for a card on Yugioh Wiki.
+        """
+
+        if not search:
+            return await ctx.send('Please enter a search term.')
+
+        url = 'https://db.ygoprodeck.com/api/v7/cardinfo.php'
+        params = {
+            'name': search
+        }
+        response = requests.get(url, params=params)
+
+        if response.status_code != 200:
+            return await ctx.send('No results found.')
+
+        data = json.loads(response.text)
+        
+        images = []
+        for i in range(len(data['data'][0]['card_images'])):
+            images.append(data['data'][0]['card_images'][i]['image_url'])
+
+        embed = discord.Embed(title=f'{data["data"][0]["name"]}', color=0x00ff00)
+        embed.set_image(url=images[0])
+        embed.add_field(name='Card Type', value=data['data'][0]['type'])
+        embed.add_field(name='Card Description', value=data['data'][0]['desc'])
+        embed.add_field(name='Card ATK', value=data['data'][0]['atk'])
+        embed.add_field(name='Card DEF', value=data['data'][0]['def'])
+        embed.add_field(name='Card Level', value=data['data'][0]['level'])
+        
+        message = await ctx.send(embed=embed)
+
+        # Add reactions to the message
+        await message.add_reaction('◀️')
+        await message.add_reaction('▶️')
+
+        # Wait for a reaction
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) in ['◀️', '▶️'] and reaction.message.id == message.id
+        
+        index = 0
+        while True:
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+            except asyncio.TimeoutError:
+                return await ctx.send('Timed out.')
+
+            if str(reaction.emoji) == '◀️':
+                index -= 1
+                if index < 0:
+                    index = len(images) - 1
+            elif str(reaction.emoji) == '▶️':
+                index += 1
+                if index >= len(images):
+                    index = 0
+
+            embed.clear_fields()
+            embed.set_image(url=images[index])
+            embed.add_field(name='Card Type', value=data['data'][0]['type'])
+            embed.add_field(name='Card Description', value=data['data'][0]['desc'])
+            embed.add_field(name='Card ATK', value=data['data'][0]['atk'])
+            embed.add_field(name='Card DEF', value=data['data'][0]['def'])
+            embed.add_field(name='Card Level', value=data['data'][0]['level'])
+            await message.edit(embed=embed)
+
+            await message.remove_reaction(reaction.emoji, user)
+
         
 def setup(bot):
     bot.add_cog(Search(bot))

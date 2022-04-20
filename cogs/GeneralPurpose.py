@@ -131,18 +131,18 @@ class Generalpurpose(commands.Cog):
     
     # define a listener
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message): pass
         # check if message author is 'Extrieve'
-        if message.author.name == 'Renato Tizon':
-            # fire emoji reaction
-            await message.add_reaction('🔥')
-            # red pepper emoji
-            await message.add_reaction('🌶')
+        # if message.author.name == 'Renato Tizon':
+        #     # fire emoji reaction
+        #     await message.add_reaction('🔥')
+        #     # red pepper emoji
+        #     await message.add_reaction('🌶')
 
-        if message.author.name == 'Buddha':
-            if 'png' or 'jpg' in message.content:
-                # add wolf emoji reaction
-                await message.add_reaction('🐺')
+        # if message.author.name == 'Buddha':
+        #     if 'png' or 'jpg' in message.content:
+        #         # add wolf emoji reaction
+        #         await message.add_reaction('🐺')
             
         
 
