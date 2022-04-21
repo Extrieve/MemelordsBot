@@ -128,6 +128,39 @@ class Generalpurpose(commands.Cog):
         else:
             return await ctx.send('Sorry, there was an error getting the avatar')
 
+    @commands.command(name='qr', aliases=['qrcode'])
+    async def qr(self, ctx, qr_url):
+        """
+        Decode a QR code from a given URL.
+        """
+        if not qr_url:
+            return await ctx.send('You did not specify a URL.')
+
+        url = 'http://api.qrserver.com/v1/read-qr-code/?fileurl='
+
+        r = requests.get(url + qr_url)
+        await ctx.send('Loading...')
+        if r.status_code != (200 or 204):
+            return await ctx.send(f'Error: {r.status_code}')
+
+        data = r.json()
+        return await ctx.send(data[0]['symbol'][0]['data'])
+
+    # on raw reaction
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+        if message.author.bot:
+            return
+
+        reaction = discord.utils.get(message.reactions, emoji='😎')
+        if not reaction:
+            return
+
+        # user = payload.member
+        return await self.qr(message.channel, message.content)
+
     
     # define a listener
     @commands.Cog.listener()
