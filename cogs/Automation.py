@@ -110,7 +110,7 @@ class Automation(commands.Cog):
         search.submit()
 
         # wait until class name is loaded
-        WebDriverWait(self.driver, 20).until(
+        WebDriverWait(self.driver, 25).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'profile'))
         )
         self.driver.get(self.driver.current_url + '/ingame')
@@ -121,7 +121,7 @@ class Automation(commands.Cog):
         # # for all divs find class name = 'css-1n276kj eafu1dm0'
         # div = divs.find_elements(By.CLASS_NAME, 'css-1n276kj eafu1dm0')
 
-        WebDriverWait(self.driver, 20).until(
+        WebDriverWait(self.driver, 25).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'team-name'))
         )
 
