@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from PIL import Image
 import discord
 import asyncio
-import io
+import os
 
 class Automation(commands.Cog):
     """Cog for automation purposes with Selenium and Beautiful Soup."""
@@ -155,6 +155,11 @@ class Automation(commands.Cog):
         self.driver.get(url)
 
         self.driver.save_screenshot(r'../screenshot.png')
+
+        # while screenshot is not saved wait
+        while not os.path.isfile(r'../screenshot.png'):
+            pass
+
         self.driver.close()
         self.driver.quit()
 
