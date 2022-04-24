@@ -157,7 +157,11 @@ class Automation(commands.Cog):
         url = 'https://www.google.com'
         self.driver.get(url)
 
-        self.driver.save_screenshot(r'../screenshot.png')
+        img = self.driver.save_screenshot(r'../screenshot.png')
+
+        with open(r'../screenshot.png', 'wb') as f:
+            f.write(img)
+
         self.driver.close()
         self.driver.quit()
 
