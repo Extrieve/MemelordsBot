@@ -127,7 +127,7 @@ class Automation(commands.Cog):
 
         # take a full page screenshot
         ob = Screenshot_Clipping.Screenshot()
-        ob.full_Screenshot(self.driver, save_path='.',
+        ob.full_Screenshot(self.driver, save_path=r'.',
                            image_name='livegame.png')
 
         # read the image
