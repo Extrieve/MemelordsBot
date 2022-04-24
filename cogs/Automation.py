@@ -115,12 +115,6 @@ class Automation(commands.Cog):
         )
         self.driver.get(self.driver.current_url + '/ingame')
 
-        # # find div tag
-        # divs = self.driver.find_element(By.TAG_NAME, 'div')
-
-        # # for all divs find class name = 'css-1n276kj eafu1dm0'
-        # div = divs.find_elements(By.CLASS_NAME, 'css-1n276kj eafu1dm0')
-
         WebDriverWait(self.driver, 25).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'team-name'))
         )
@@ -157,16 +151,17 @@ class Automation(commands.Cog):
         url = 'https://www.google.com'
         self.driver.get(url)
 
-        self.driver.save_screenshot(r'../screenshot.png')
+        self.driver.save_screenshot(r'screenshot.png')
 
         # while screenshot is not saved wait
-        while not os.path.isfile(r'../screenshot.png'):
+        while not os.path.isfile(r'screenshot.png'):
+            print('waiting')
             pass
 
         self.driver.close()
         self.driver.quit()
 
-        await ctx.send(file=discord.File(r'../screenshot.png'))
+        await ctx.send(file=discord.File(r'screenshot.png'))
 
 
 def setup(bot):
