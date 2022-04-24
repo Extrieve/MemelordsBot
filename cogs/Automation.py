@@ -10,6 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from PIL import Image
 import discord
 import asyncio
+import io
 
 class Automation(commands.Cog):
     """Cog for automation purposes with Selenium and Beautiful Soup."""
@@ -152,8 +153,12 @@ class Automation(commands.Cog):
         """Send a screenshot"""
         url = 'https://www.google.com'
         self.driver.get(url)
-        self.driver.get_screenshot_as_file(r'../google.png')
-        await ctx.send(file=discord.File(r'../google.png'))
+
+        self.driver.save_screenshot(r'../screenshot.png')
+        self.driver.close()
+        self.driver.quit()
+
+        await ctx.send(file=discord.File(r'../screenshot.png'))
 
 def setup(bot):
     bot.add_cog(Automation(bot))
