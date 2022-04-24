@@ -110,25 +110,22 @@ class Automation(commands.Cog):
         search.submit()
 
         # wait until class name is loaded
-        WebDriverWait(self.driver, 25).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'profile'))
         )
         self.driver.get(self.driver.current_url + '/ingame')
 
-        WebDriverWait(self.driver, 25).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'team-name'))
         )
 
         # take a full page screenshot
         ob = Screenshot_Clipping.Screenshot()
-        # ob.full_Screenshot(self.driver, save_path=r'..',
-        #                    image_name='livegame.png')
+        ob.full_Screenshot(self.driver, save_path=r'.',
+                           image_name='livegame.png')
 
-        img = ob.full_Screenshot(self.driver, save_path=r'.', image_name=r'livegame.png')
-
-        # close browser
-        self.driver.close()
-        self.driver.quit()
+        # read the image
+        img = Image.open(r'livegame.png')
 
         # width, height
         w, h = img.size
@@ -140,8 +137,12 @@ class Automation(commands.Cog):
         bottom = int(h * 0.88)
 
         # save the cropped image
-        img = img.crop((left, top, right, bottom)).save(r'livegame_cropped.png')
-        # send the image variable
+        img.crop((left, top, right, bottom)).save(r'livegame_cropped.png')
+        # close browser
+        self.driver.close()
+        self.driver.quit()
+
+        # send the image
         await ctx.send(file=discord.File(r'livegame_cropped.png'))
 
     # test screenshot send
