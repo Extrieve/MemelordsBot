@@ -130,7 +130,7 @@ class Automation(commands.Cog):
         # ob.full_Screenshot(self.driver, save_path=r'..',
         #                    image_name='livegame.png')
 
-        img = ob.get_screenshot(self.driver)
+        img = ob.full_Screenshot(self.driver)
 
         # width, height
         w, h = img.size
@@ -149,6 +149,15 @@ class Automation(commands.Cog):
 
         # send the image variable
         await ctx.send(file=discord.File(r'../livegame_cropped.png'))
+
+    # test screenshot send
+    @commands.command(name='screenshot')
+    async def screenshot(self, ctx):
+        """Send a screenshot"""
+        url = 'https://www.google.com'
+        self.driver.get(url)
+
+        await ctx.send(file=self.driver.get_screenshot_as_png())
 
 
 def setup(bot):
