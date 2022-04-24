@@ -2,10 +2,12 @@
 
 from discord.ext import commands
 from selenium import webdriver
+from Screenshot import Screenshot_Clipping
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from PIL import Image
 import discord
 import asyncio
 
@@ -95,10 +97,54 @@ class Automation(commands.Cog):
         region = [key for key, value in self.regions.items() if value[1] == str(reaction.emoji)][0]
 
         url = f'https://{region}.op.gg'
-        await ctx.send(url)
+        self.driver.get(url)
         
+        await ctx.send('Loading your stats...')
+        
+        search = self.driver.find_element(By.ID, 'searchSummoner')
+        search.send_keys(summoner)
+        search.submit()
 
-    
+        # wait until class name is loaded
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'profile'))
+        )
+        self.driver.get(self.driver.current_url + '/ingame')
+
+        # find div tag
+        divs = self.driver.find_element(By.TAG_NAME, 'div')
+
+        # for all divs find class name = 'css-1n276kj eafu1dm0'
+        div = divs.find_elements(By.CLASS_NAME, 'css-1n276kj eafu1dm0')
+
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'team-name'))
+        )
+
+        # take a full page screenshot
+        ob = Screenshot_Clipping.Screenshot()
+        ob.full_Screenshot(self.driver, save_path=r'..', image_name='livegame.png')
+
+        # read the image
+        img = Image.open(r'../livegame.png')
+
+        # width, height
+        w, h = img.size
+
+        # cropping the image
+        left = int(w * 0.24)
+        right = int(w * 0.76)
+        top = int(h * 0.47)
+        bottom = int(h * 0.88)
+
+        # save the cropped image
+        img.crop((left, top, right, bottom)).save(r'../livegame_cropped.png')
+        # close browser
+        self.driver.close()
+        self.driver.quit()
+
+        # send the image
+        await ctx.send(file=discord.File(r'../livegame_cropped.png'))
 
 def setup(bot):
     bot.add_cog(Automation(bot))
