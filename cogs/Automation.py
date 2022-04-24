@@ -149,7 +149,7 @@ class Automation(commands.Cog):
         self.driver.quit()
 
         # send the image
-        await ctx.send(file=discord.File(r'../livegame_cropped.png'))
+        await ctx.send(file=discord.File(r'livegame_cropped.png'))
 
 
 def setup(bot):
