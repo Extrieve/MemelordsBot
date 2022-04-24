@@ -23,8 +23,8 @@ class Automation(commands.Cog):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    driver = webdriver.Chrome(executable_path=os.environ.get(
-        "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    service = Service(os.environ.get("CHROMEDRIVER_PATH"))
+    driver = webdriver.Chrome(service=service, chrome_options=chrome_options)
 
     # op gg regions
     regions = {'na': ('North America', '🇺🇸'), 'euw': ('Europe West', '🇪🇺'), 'br': (
@@ -115,23 +115,24 @@ class Automation(commands.Cog):
         )
         self.driver.get(self.driver.current_url + '/ingame')
 
-        # find div tag
-        divs = self.driver.find_element(By.TAG_NAME, 'div')
+        # # find div tag
+        # divs = self.driver.find_element(By.TAG_NAME, 'div')
 
-        # for all divs find class name = 'css-1n276kj eafu1dm0'
-        div = divs.find_elements(By.CLASS_NAME, 'css-1n276kj eafu1dm0')
+        # # for all divs find class name = 'css-1n276kj eafu1dm0'
+        # div = divs.find_elements(By.CLASS_NAME, 'css-1n276kj eafu1dm0')
 
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'team-name'))
         )
 
         # take a full page screenshot
-        ob = Screenshot_Clipping.Screenshot()
-        ob.full_Screenshot(self.driver, save_path=r'..',
-                           image_name='livegame.png')
+        # ob = Screenshot_Clipping.Screenshot()
+        # ob.full_Screenshot(self.driver, save_path=r'..',
+        #                    image_name='livegame.png')
 
+        self.driver.save_screenshot('../livegame.png')
         # read the image
-        img = Image.open(r'../livegame.png')
+        img = Image.open('../livegame.png')
 
         # width, height
         w, h = img.size
