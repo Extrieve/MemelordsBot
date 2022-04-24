@@ -124,7 +124,11 @@ class Automation(commands.Cog):
         # ob.full_Screenshot(self.driver, save_path=r'..',
         #                    image_name='livegame.png')
 
-        img = ob.full_Screenshot(self.driver)
+        img = ob.full_Screenshot(self.driver, save_path=r'.', image_name=r'livegame.png')
+
+        # close browser
+        self.driver.close()
+        self.driver.quit()
 
         # width, height
         w, h = img.size
@@ -136,13 +140,9 @@ class Automation(commands.Cog):
         bottom = int(h * 0.88)
 
         # save the cropped image
-        img = img.crop((left, top, right, bottom)).save(r'../livegame_cropped.png')
-        # close browser
-        self.driver.close()
-        self.driver.quit()
-
+        img = img.crop((left, top, right, bottom)).save(r'livegame_cropped.png')
         # send the image variable
-        await ctx.send(file=discord.File(r'../livegame_cropped.png'))
+        await ctx.send(file=discord.File(r'livegame_cropped.png'))
 
     # test screenshot send
     @commands.command(name='screenshot')
