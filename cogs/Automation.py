@@ -74,9 +74,10 @@ class Automation(commands.Cog):
         """Get your OP.GG stats"""
         if not summoner:
             return await ctx.send('Please provide a summoner name')
-        
+
         # send embed with the regions and their respective flags next to it
-        embed = discord.Embed(title='OP.GG', description='Select a region', color=0x00ff00)
+        embed = discord.Embed(
+            title='OP.GG', description='Select a region', color=0x00ff00)
         for region, values in self.regions.items():
             embed.add_field(name=region, value=values[1], inline=True)
         msg = await ctx.send(embed=embed)
@@ -88,20 +89,21 @@ class Automation(commands.Cog):
         # wait for a reaction
         def check(reaction, user):
             return user == ctx.author and str(reaction.emoji) in self.flags
-        
+
         try:
             reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
         except asyncio.TimeoutError:
             return await ctx.send('You took too long to react, cancelling...')
 
         # get the region from the reaction
-        region = [key for key, value in self.regions.items() if value[1] == str(reaction.emoji)][0]
+        region = [key for key, value in self.regions.items() if value[1]
+                  == str(reaction.emoji)][0]
 
         url = f'https://{region}.op.gg'
         self.driver.get(url)
-        
+
         await ctx.send('Loading your stats...')
-        
+
         search = self.driver.find_element(By.ID, 'searchSummoner')
         search.send_keys(summoner)
         search.submit()
@@ -112,22 +114,17 @@ class Automation(commands.Cog):
         )
         self.driver.get(self.driver.current_url + '/ingame')
 
-        # find div tag
-        divs = self.driver.find_element(By.TAG_NAME, 'div')
-
-        # for all divs find class name = 'css-1n276kj eafu1dm0'
-        div = divs.find_elements(By.CLASS_NAME, 'css-1n276kj eafu1dm0')
-
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'team-name'))
         )
 
         # take a full page screenshot
         ob = Screenshot_Clipping.Screenshot()
-        ob.full_Screenshot(self.driver, save_path=r'..', image_name='livegame.png')
+        ob.full_Screenshot(self.driver, save_path=r'.',
+                           image_name='livegame.png')
 
         # read the image
-        img = Image.open(r'../livegame.png')
+        img = Image.open(r'livegame.png')
 
         # width, height
         w, h = img.size
@@ -139,13 +136,13 @@ class Automation(commands.Cog):
         bottom = int(h * 0.88)
 
         # save the cropped image
-        img.crop((left, top, right, bottom)).save(r'../livegame_cropped.png')
+        img.crop((left, top, right, bottom)).save(r'livegame_cropped.png')
         # close browser
         self.driver.close()
         self.driver.quit()
 
         # send the image
-        await ctx.send(file=discord.File(r'../livegame_cropped.png'))
+        await ctx.send(file=discord.File(r'livegame_cropped.png'))
 
     # test screenshot send
     @commands.command(name='screenshot')
