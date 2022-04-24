@@ -156,8 +156,8 @@ class Automation(commands.Cog):
         """Send a screenshot"""
         url = 'https://www.google.com'
         self.driver.get(url)
-
-        await ctx.send(file=self.driver.get_screenshot_as_png())
+        self.driver.get_screenshot_as_file(r'../google.png')
+        await ctx.send(file=discord.File(r'../google.png'))
 
 
 def setup(bot):
