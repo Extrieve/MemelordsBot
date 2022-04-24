@@ -157,10 +157,11 @@ class Automation(commands.Cog):
         url = 'https://www.google.com'
         self.driver.get(url)
 
-        img = self.driver.save_screenshot(r'../screenshot.png')
+        self.driver.save_screenshot(r'../screenshot.png')
 
-        with open(r'../screenshot.png', 'wb') as f:
-            f.write(img)
+        # while screenshot is not saved wait
+        while not os.path.isfile(r'../screenshot.png'):
+            pass
 
         self.driver.close()
         self.driver.quit()
