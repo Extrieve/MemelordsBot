@@ -17,7 +17,7 @@ class Anime(commands.Cog):
 
     working_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.append(f'{working_dir}..')
-    themes_data = json.load(open(f'{working_dir}/../db/themes1.json', encoding='utf8'))
+    themes_data = json.load(open(f'{working_dir}/../db/themes2.json', encoding='utf8'))
     pic_url = 'https://api.waifu.pics/sfw/'
 
     with open(f'{working_dir}/../db/registered_ids.csv', 'r', encoding='utf-8') as f:
