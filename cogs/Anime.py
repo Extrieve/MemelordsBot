@@ -20,7 +20,7 @@ class Anime(commands.Cog):
     themes_data = json.load(open(f'{working_dir}/../db/themes2.json', encoding='utf8'))
     pic_url = 'https://api.waifu.pics/sfw/'
 
-    with open(f'{working_dir}/../db/registered_ids.csv', 'r', encoding='utf-8') as f:
+    with open(f'{working_dir}/../db/registered_ids1.csv', 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         registered_ids = [int(row[0]) for row in list(reader)[1:]]
 
