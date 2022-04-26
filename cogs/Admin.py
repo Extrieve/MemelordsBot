@@ -85,6 +85,19 @@ class Admin(commands.Cog):
         # Assign the member the role 'Normies'
         role = discord.utils.get(member.guild.roles, name='Normies')
         await member.add_roles(role)
+
+    # get guild id
+    @commands.command(name='guildid', aliases=['gid'], pass_context=True)
+    async def guildid(self, ctx):
+        """Get the guild id."""
+        await ctx.send(f'The guild id is {ctx.guild.id}')
+
+    # create guild invite
+    @commands.command(name='invite', aliases=['i'], pass_context=True)
+    async def invite(self, ctx):
+        """Create an invite for the server."""
+        invite = await ctx.channel.create_invite(max_age=0, max_uses=0)
+        await ctx.send(f'{invite.url}')
     
 
 def setup(bot):
